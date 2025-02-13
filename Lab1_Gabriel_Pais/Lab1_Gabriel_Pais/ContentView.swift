@@ -100,6 +100,12 @@ struct ContentView: View {
         showScoreAlert = true
     }
 
+    func resetGame() {
+        gameStarted = false
+        gameOver = false
+        currentNumber = 0
+    }
+
 }
 
 struct ContentView_Previews: PreviewProvider {
