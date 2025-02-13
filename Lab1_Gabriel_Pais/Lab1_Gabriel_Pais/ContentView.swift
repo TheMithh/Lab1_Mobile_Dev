@@ -28,6 +28,31 @@ struct ContentView: View {
             Text("Prime Number Game")
                 .font(.largeTitle)
                 .fontWeight(.bold)
+            if !gameStarted {
+                if let lastCorrect = lastCorrectCount, let lastWrong = lastWrongCount {
+                    VStack {
+                        Text("Last Attempt Results")
+                            .font(.headline)
+                            .padding(.top)
+                        HStack {
+                            Text("✅ Correct: \(lastCorrect)")
+                                .foregroundColor(.green)
+                            Spacer()
+                            Text("❌ Wrong: \(lastWrong)")
+                                .foregroundColor(.red)
+                        }
+                        .padding()
+                        .background(Color(UIColor.systemGray6))
+                        .cornerRadius(10)
+                    }
+                } else {
+                    Text("No Previous Attempts")
+                        .foregroundColor(.gray)
+                        .italic()
+                        .padding()
+                }
+            }
+
         }
     }
 
