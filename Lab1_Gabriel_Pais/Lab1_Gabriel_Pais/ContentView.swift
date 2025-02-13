@@ -126,6 +126,9 @@ struct ContentView: View {
         Text("✅ Correct: \\(correctCount)\n❌ Wrong: \\(wrongCount)")
     }
 
+    if attempts >= maxAttempts {
+        endGame()
+    }
 
 }
 
