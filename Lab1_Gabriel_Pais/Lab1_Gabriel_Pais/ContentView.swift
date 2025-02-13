@@ -83,6 +83,11 @@ struct ContentView: View {
         currentNumber = Int.random(in: 1...100)
     }
     
+    func startTimer() {
+        timer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: false) { _ in
+            checkAnswer(isPrime: false, timeExpired: true)
+        }
+    }
 
 }
 
