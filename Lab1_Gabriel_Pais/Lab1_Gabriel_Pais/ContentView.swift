@@ -22,6 +22,14 @@ struct ContentView: View {
     @State private var gameOver = false
 
     let maxAttempts = 10  // Maximum number of tries per game
+    
+    var body: some View {
+        VStack(spacing: 20) {
+            Text("Prime Number Game")
+                .font(.largeTitle)
+                .fontWeight(.bold)
+        }
+    }
 
 }
 
