@@ -89,6 +89,11 @@ struct ContentView: View {
         }
     }
 
+    func stopTimer() {
+        timer?.invalidate()
+        timer = nil
+    }
+
 }
 
 struct ContentView_Previews: PreviewProvider {
