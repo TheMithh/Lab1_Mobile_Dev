@@ -93,6 +93,12 @@ struct ContentView: View {
         timer?.invalidate()
         timer = nil
     }
+    
+    func endGame() {
+        gameOver = true
+        gameStarted = false
+        showScoreAlert = true
+    }
 
 }
 
