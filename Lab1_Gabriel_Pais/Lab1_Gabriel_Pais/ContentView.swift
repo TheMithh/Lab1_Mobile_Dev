@@ -25,15 +25,14 @@ struct ContentView: View {
     
     var body: some View {
         VStack(spacing: 20) {
-            Text("Prime Number Game")
-                .font(.largeTitle)
-                .fontWeight(.bold)
+            // Show Last Attempt Results ONLY when the game has NOT started
             if !gameStarted {
                 if let lastCorrect = lastCorrectCount, let lastWrong = lastWrongCount {
                     VStack {
                         Text("Last Attempt Results")
                             .font(.headline)
                             .padding(.top)
+
                         HStack {
                             Text("✅ Correct: \(lastCorrect)")
                                 .foregroundColor(.green)
@@ -44,6 +43,7 @@ struct ContentView: View {
                         .padding()
                         .background(Color(UIColor.systemGray6))
                         .cornerRadius(10)
+                        .padding(.horizontal)
                     }
                 } else {
                     Text("No Previous Attempts")
@@ -53,29 +53,70 @@ struct ContentView: View {
                 }
             }
 
+            // Show "Start" button if game has NOT started or if game over
             if !gameStarted || gameOver {
-                Button("Start Game", action: startGame)
+                Button(action: startGame) {
+                    Text(gameOver ? "Restart Game" : "Start Game")
+                        .font(.title)
+                        .frame(width: 200, height: 50)
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                        .shadow(radius: 5)
+                }
+            } else {
+                // Once game has started, show game UI
+                Text("Is \(currentNumber) a prime number?")
+                    .font(.largeTitle)
+                    .padding()
+
+                HStack {
+                    Button(action: { checkAnswer(isPrime: true, timeExpired: false) }) {
+                        Text("Prime")
+                            .font(.title)
+                            .frame(width: 120, height: 50)
+                            .background(Color.green)
+                            .foregroundColor(.white)
+                            .cornerRadius(10)
+                            .shadow(radius: 5)
+                    }
+
+                    Button(action: { checkAnswer(isPrime: false, timeExpired: false) }) {
+                        Text("Not Prime")
+                            .font(.title)
+                            .frame(width: 120, height: 50)
+                            .background(Color.red)
+                            .foregroundColor(.white)
+                            .cornerRadius(10)
+                            .shadow(radius: 5)
+                    }
+                }
+
+                if showResult {
+                    Image(systemName: isCorrect ? "checkmark.circle" : "xmark.circle")
+                        .resizable()
+                        .frame(width: 100, height: 100)
+                        .foregroundColor(isCorrect ? .green : .red)
+                        .transition(.scale)
+                }
+                
+                Text("Attempts: \(attempts)/\(maxAttempts)")
+                    .font(.headline)
+                    .foregroundColor(.gray)
             }
-
-            // 🚀 Commit 6: Add question label
-            if gameStarted {
-                Text("Is \\(currentNumber) a prime number?")
-                    .font(.title)
-            }
-
-            // 🚀 Commit 7: Add answer buttons
-            HStack {
-                Button("Prime") { checkAnswer(isPrime: true, timeExpired: false) }
-                Button("Not Prime") { checkAnswer(isPrime: false, timeExpired: false) }
-            }
-
-            // 🚀 Commit 8: Add attempts counter
-            Text("Attempts: \\(attempts)/\"\"\"\\(maxAttempts)\")")
-                .font(.headline)
-
         }
+        .alert("Game Over", isPresented: $showScoreAlert, actions: {
+            Button("OK") {
+                lastCorrectCount = correctCount
+                lastWrongCount = wrongCount
+                resetGame()
+            }
+        }, message: {
+            Text("✅ Correct: \(correctCount)\n❌ Wrong: \(wrongCount)")
+        })
     }
 
+    // Start game when user presses "Start Game" button
     func startGame() {
         gameStarted = true
         gameOver = false
@@ -88,24 +129,43 @@ struct ContentView: View {
 
     func checkAnswer(isPrime: Bool, timeExpired: Bool) {
         stopTimer()
+        
         if timeExpired {
+            // If the user does NOT select in time, it's always counted as incorrect
             isCorrect = false
             wrongCount += 1
         } else {
-            isCorrect = isPrime == self.isPrime(currentNumber)
-            if isCorrect { correctCount += 1 } else { wrongCount += 1 }
+            // Normal answer checking
+            let correctAnswer = self.isPrime(currentNumber)
+            isCorrect = (isPrime == correctAnswer)
+            if isCorrect {
+                correctCount += 1
+            } else {
+                wrongCount += 1
+            }
         }
+
         showResult = true
         attempts += 1
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            showResult = false
+            if attempts >= maxAttempts {
+                endGame()
+            } else {
+                nextNumber()
+            }
+        }
     }
-    
+
     func nextNumber() {
         currentNumber = Int.random(in: 1...100)
+        startTimer()
     }
-    
+
     func startTimer() {
         timer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: false) { _ in
-            checkAnswer(isPrime: false, timeExpired: true)
+            checkAnswer(isPrime: false, timeExpired: true) // Ensures timeout is always incorrect
         }
     }
 
@@ -113,7 +173,7 @@ struct ContentView: View {
         timer?.invalidate()
         timer = nil
     }
-    
+
     func endGame() {
         gameOver = true
         gameStarted = false
@@ -123,33 +183,19 @@ struct ContentView: View {
     func resetGame() {
         gameStarted = false
         gameOver = false
-        currentNumber = 0
+        currentNumber = 0  // Reset to blank before next start
     }
 
     func isPrime(_ number: Int) -> Bool {
         guard number > 1 else { return false }
-        for i in 2..<Int(sqrt(Double(number))) + 1 {
-            if number % i == 0 { return false }
+        if number <= 3 { return true }
+        for i in 2...Int(sqrt(Double(number))) {
+            if number % i == 0 {
+                return false
+            }
         }
         return true
     }
-
-    struct ContentView_Previews: PreviewProvider {
-        static var previews: some View {
-            ContentView()
-        }
-    }
-
-    .alert("Game Over", isPresented: $showScoreAlert) {
-        Button("OK") { resetGame() }
-    } message: {
-        Text("✅ Correct: \\(correctCount)\n❌ Wrong: \\(wrongCount)")
-    }
-
-    if attempts >= maxAttempts {
-        endGame()
-    }
-
 }
 
 struct ContentView_Previews: PreviewProvider {
