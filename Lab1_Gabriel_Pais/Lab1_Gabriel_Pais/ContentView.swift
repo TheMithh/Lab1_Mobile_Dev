@@ -55,6 +55,17 @@ struct ContentView: View {
 
         }
     }
+    
+    func startGame() {
+        gameStarted = true
+        gameOver = false
+        correctCount = 0
+        wrongCount = 0
+        attempts = 0
+        nextNumber()
+        startTimer()
+    }
+    
 
 }
 
