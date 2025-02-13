@@ -79,6 +79,10 @@ struct ContentView: View {
         attempts += 1
     }
     
+    func nextNumber() {
+        currentNumber = Int.random(in: 1...100)
+    }
+    
 
 }
 
