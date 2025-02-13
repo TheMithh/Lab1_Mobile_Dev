@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var currentNumber = 0
+    @State private var currentNumber = 0  // No number displayed initially
     @State private var gameStarted = false
     @State private var showResult = false
     @State private var isCorrect = false
@@ -22,7 +22,7 @@ struct ContentView: View {
     @State private var gameOver = false
 
     let maxAttempts = 10  // Maximum number of tries per game
-    
+
     var body: some View {
         VStack(spacing: 20) {
             // Show Last Attempt Results ONLY when the game has NOT started
