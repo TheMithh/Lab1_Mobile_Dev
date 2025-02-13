@@ -53,6 +53,26 @@ struct ContentView: View {
                 }
             }
 
+            if !gameStarted || gameOver {
+                Button("Start Game", action: startGame)
+            }
+
+            // 🚀 Commit 6: Add question label
+            if gameStarted {
+                Text("Is \\(currentNumber) a prime number?")
+                    .font(.title)
+            }
+
+            // 🚀 Commit 7: Add answer buttons
+            HStack {
+                Button("Prime") { checkAnswer(isPrime: true, timeExpired: false) }
+                Button("Not Prime") { checkAnswer(isPrime: false, timeExpired: false) }
+            }
+
+            // 🚀 Commit 8: Add attempts counter
+            Text("Attempts: \\(attempts)/\"\"\"\\(maxAttempts)\")")
+                .font(.headline)
+
         }
     }
 
