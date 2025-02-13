@@ -55,7 +55,7 @@ struct ContentView: View {
 
         }
     }
-    
+
     func startGame() {
         gameStarted = true
         gameOver = false
@@ -64,6 +64,19 @@ struct ContentView: View {
         attempts = 0
         nextNumber()
         startTimer()
+    }
+
+    func checkAnswer(isPrime: Bool, timeExpired: Bool) {
+        stopTimer()
+        if timeExpired {
+            isCorrect = false
+            wrongCount += 1
+        } else {
+            isCorrect = isPrime == self.isPrime(currentNumber)
+            if isCorrect { correctCount += 1 } else { wrongCount += 1 }
+        }
+        showResult = true
+        attempts += 1
     }
     
 
