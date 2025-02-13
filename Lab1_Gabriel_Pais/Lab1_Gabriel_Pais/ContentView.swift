@@ -120,6 +120,12 @@ struct ContentView: View {
         }
     }
 
+    .alert("Game Over", isPresented: $showScoreAlert) {
+        Button("OK") { resetGame() }
+    } message: {
+        Text("✅ Correct: \\(correctCount)\n❌ Wrong: \\(wrongCount)")
+    }
+
 
 }
 
